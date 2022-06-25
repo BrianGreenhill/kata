@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ex
+set -e
 
 newFolder() {
 	dirname=$(date +%Y-%m-%d)
@@ -14,6 +14,13 @@ copyFiles() {
 	cp -r $srcdir/* $destdir
 }
 
+ensuredeps() {
+	if ! nodemon -v >/dev/null; then
+		echo "nodemon not found"
+		npm install -g nodemon
+	fi
+}
+
 watch() {
 	destdir=$(date +%Y-%m-%d)
 	nodemon -e go -w ./$destdir -x "cd ${destdir} && go test -v ./... || true"
@@ -22,6 +29,7 @@ watch() {
 startDay() {
 	newFolder
 	copyFiles
+	ensuredeps
 	watch
 }
 
